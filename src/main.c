@@ -1,13 +1,16 @@
 #include "avr/io.h"
+#include "drivers/spi.h"
+#include "drivers/ili9341.h"
 
 int main(void)
 {
-   
+   spi_init();
+   ili9341_init();
 
-    while (1)
-    {
-        
-    }
+   //test
+   ili9341_fill_screen(COLOR_RED);
 
-    return 0;
+   while (1) {}
+   return 0;
+
 }
