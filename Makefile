@@ -14,7 +14,7 @@ $(TARGET).hex: $(TARGET).elf
 	$(OBJCOPY) -O ihex $< $@
 
 flash: $(TARGET).hex
-	avrdude -c arduino -p atmega328p -P /dev/cu.usbmodem1301 -b 115200 -U flash:w:main.hex
+	avrdude -c arduino -p $(MCU) -P /dev/cu.usbserial-* -b 115200 -U flash:w:$<
 
 clean:
 	rm -f *.elf *.hex
