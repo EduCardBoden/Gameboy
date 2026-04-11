@@ -3,7 +3,7 @@
 
 void spi_init(void) {
     
-    DDRD |= (1 << PB5) | (1 << PB3) | (1 << PB2); // SCK (PB5), MOSI (PB3), CS (PB2) output
+    DDRB |= (1 << PB5) | (1 << PB3) | (1 << PB2); // SCK (PB5), MOSI (PB3), CS (PB2) output
 
     SPCR = (1 << SPE) | (1 << MSTR);
     SPSR = (1 << SPI2X);
