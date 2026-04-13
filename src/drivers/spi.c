@@ -13,5 +13,5 @@ void spi_init(void) {
 uint8_t spi_transfer(uint8_t data) {
     SPDR = data; //every byte automatically clocked to MOSI-pin
     while (!(SPSR & (1 << SPIF))); //keep looping until nothing to write 
-    return SPDR; //not needed for ILI9341 because nothing meaningful gets written back
+    return SPDR; //not needed for ILI9341 because nothing important gets written back
 }
