@@ -1,30 +1,36 @@
 #include "font.h"
+#include "../drivers/ili9341.h"
 #include <avr/io.h>
-#include "drivers/ili9341.h"
+
+const uint8_t font[][7] = {
+    {0x70, 0x88, 0x88, 0x88, 0x88, 0x88, 0x70}, // 0
+    {0x20, 0x60, 0x20, 0x20, 0x20, 0x20, 0x70}, // 1
+    {0x70, 0x08, 0x30, 0x40, 0x40, 0x40, 0x78}, // 2
+    {0x70, 0x08, 0x30, 0x08, 0x30, 0x08, 0x70}, // 3
+    {0x88, 0x88, 0x88, 0xF8, 0x08, 0x08, 0x08}, // 4
+    {0x78, 0x80, 0x80, 0xF0, 0x08, 0x08, 0xF0}, // 5
+    {0x70, 0x80, 0x80, 0xF0, 0x88, 0x88, 0x70}, // 6
+    {0xF8, 0x08, 0x10, 0x20, 0x40, 0x80, 0x80}, // 7
+    {0x70, 0x88, 0x88, 0x70, 0x88, 0x88, 0x70}, // 8
+    {0x70, 0x88, 0x88, 0x78, 0x08, 0x08, 0x70}, // 9
+};
 
 void draw_char(uint8_t c, uint16_t x, uint16_t y, uint16_t color, uint16_t bg, uint8_t scale) {
-
-    for(int row = 0; row < 7; row++) { //alle 7 zeilen durchgehen
-
-        for(int col = 0; col < 5; col++) { //alle 5 spalten durchgehen
-
-            if(font[c - '0'][row] & (0x80 >> col)) { //gibt es ein pit in pos col?
-
-                ili9341_fill_rect(x + col * scale, y + row * scale, scale, scale, color); //ja -> vordergrund farbe
-            }
-            else {
-
-                ili9341_fill_rect(x + col * scale, y + row * scale, scale, scale, bg); //nein -> hintergrund farbe
+    for (int row = 0; row < 7; row++) {
+        for (int col = 0; col < 5; col++) {
+            if (font[c - '0'][row] & (0x80 >> col)) {
+                ili9341_fill_rect(x + col * scale, y + row * scale, scale, scale, color);
+            } else {
+                ili9341_fill_rect(x + col * scale, y + row * scale, scale, scale, bg);
             }
         }
     }
 }
 
 void draw_string(const char *str, uint16_t x, uint16_t y, uint16_t color, uint16_t bg, uint8_t scale) {
-    while (*str) { //solange kein \0 (string ende)    
-                        
-        draw_char(*str, x, y, color, bg, scale); //aktuelle char zeichnen
-        str++; //pointer zu nächsten char
-        x += 6 * scale; //6 pixel weiter nach rechts
+    while (*str) {
+        draw_char(*str, x, y, color, bg, scale);
+        str++;
+        x += 6 * scale;
     }
 }
