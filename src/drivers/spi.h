@@ -1,9 +1,8 @@
-#ifndef SPI_H
-#define SPI_H 
+#pragma once
 
-#include <stdint.h>
 
-void    spi_init(void);
-uint8_t spi_transfer(uint8_t data);
+#include <stdint.h> 
 
-#endif
+void    spi_init(void); //set SPI hardware on microcontroller
+uint8_t spi_transfer(uint8_t data); //send data to screen
+

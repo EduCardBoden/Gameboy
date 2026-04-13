@@ -4,7 +4,8 @@
             "name": "AVR",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/opt/homebrew/Cellar/avr-gcc@9/9.5.0/avr/include/**"
+                "/opt/homebrew/Cellar/avr-gcc@9/9.5.0/avr/include/**",
+                "${workspaceFolder}/src"
             ],
             "defines": [
                 "F_CPU=16000000UL",
