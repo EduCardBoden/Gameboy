@@ -1,3 +1,4 @@
+#define F_CPU 16000000UL
 #include "button.h"
 #include <avr/io.h>
 #include <util/delay.h>
@@ -7,7 +8,6 @@ void button_init(void) {
 
     DDRD &= ~(1 << PD2); //PD2 input
     PORTD |= (1 << PD2); //pull-up
-
 }
 
 uint8_t button_is_pressed(void) {

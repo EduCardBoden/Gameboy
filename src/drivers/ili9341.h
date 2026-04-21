@@ -15,6 +15,7 @@
 #define COLOR_CYAN    0x07FF 
 #define COLOR_MAGENTA 0xF81F 
 #define COLOR_YELLOW  0xFFE0 
+#define COLOR_ORANGE  0xFAA0
 
 #define RGB565(r, g, b) (((uint16_t)(r & 0x1F) << 11) | ((uint16_t)(g & 0x3F) << 5) | (b & 0x1F)) //macro (#define that takes input like functions)
 

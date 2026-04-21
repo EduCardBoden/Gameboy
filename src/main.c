@@ -1,8 +1,76 @@
+#define F_CPU 16000000UL
 #include <avr/io.h>
 #include "drivers/spi.h"
 #include "drivers/ili9341.h"
 #include "inputs/button.h"
 #include "font/font.h"
+#include "buzzer/buzzer.h"
+
+static const BuzzerNote tetris[] = {
+    // A section
+    {NOTE_E5, DUR_QUARTER}, {NOTE_B4, DUR_EIGHTH},  {NOTE_C5, DUR_EIGHTH},
+    {NOTE_D5, DUR_QUARTER}, {NOTE_C5, DUR_EIGHTH},  {NOTE_B4, DUR_EIGHTH},
+    {NOTE_A4, DUR_QUARTER}, {NOTE_A4, DUR_EIGHTH},  {NOTE_C5, DUR_EIGHTH},
+    {NOTE_E5, DUR_QUARTER}, {NOTE_D5, DUR_EIGHTH},  {NOTE_C5, DUR_EIGHTH},
+    {NOTE_B4, DUR_DOT_QUARTER}, {NOTE_C5, DUR_EIGHTH}, {NOTE_D5, DUR_QUARTER},
+    {NOTE_E5, DUR_QUARTER}, {NOTE_C5, DUR_QUARTER}, {NOTE_A4, DUR_QUARTER},
+    {NOTE_A4, DUR_HALF},    {NOTE_REST, DUR_QUARTER},
+
+    {NOTE_D5, DUR_QUARTER}, {NOTE_F5, DUR_EIGHTH},  {NOTE_A5, DUR_QUARTER},
+    {NOTE_G5, DUR_EIGHTH},  {NOTE_F5, DUR_EIGHTH},  {NOTE_E5, DUR_DOT_QUARTER},
+    {NOTE_C5, DUR_EIGHTH},  {NOTE_E5, DUR_QUARTER},  {NOTE_D5, DUR_EIGHTH},
+    {NOTE_C5, DUR_EIGHTH},  {NOTE_B4, DUR_DOT_QUARTER}, {NOTE_C5, DUR_EIGHTH},
+    {NOTE_D5, DUR_QUARTER}, {NOTE_E5, DUR_QUARTER},
+    {NOTE_C5, DUR_QUARTER}, {NOTE_A4, DUR_QUARTER},
+    {NOTE_A4, DUR_HALF},    {NOTE_REST, DUR_QUARTER},
+
+    // A section repeat
+    {NOTE_E5, DUR_QUARTER}, {NOTE_B4, DUR_EIGHTH},  {NOTE_C5, DUR_EIGHTH},
+    {NOTE_D5, DUR_QUARTER}, {NOTE_C5, DUR_EIGHTH},  {NOTE_B4, DUR_EIGHTH},
+    {NOTE_A4, DUR_QUARTER}, {NOTE_A4, DUR_EIGHTH},  {NOTE_C5, DUR_EIGHTH},
+    {NOTE_E5, DUR_QUARTER}, {NOTE_D5, DUR_EIGHTH},  {NOTE_C5, DUR_EIGHTH},
+    {NOTE_B4, DUR_DOT_QUARTER}, {NOTE_C5, DUR_EIGHTH}, {NOTE_D5, DUR_QUARTER},
+    {NOTE_E5, DUR_QUARTER}, {NOTE_C5, DUR_QUARTER}, {NOTE_A4, DUR_QUARTER},
+    {NOTE_A4, DUR_HALF},    {NOTE_REST, DUR_QUARTER},
+
+    {NOTE_D5, DUR_QUARTER}, {NOTE_F5, DUR_EIGHTH},  {NOTE_A5, DUR_QUARTER},
+    {NOTE_G5, DUR_EIGHTH},  {NOTE_F5, DUR_EIGHTH},  {NOTE_E5, DUR_DOT_QUARTER},
+    {NOTE_C5, DUR_EIGHTH},  {NOTE_E5, DUR_QUARTER},  {NOTE_D5, DUR_EIGHTH},
+    {NOTE_C5, DUR_EIGHTH},  {NOTE_B4, DUR_DOT_QUARTER}, {NOTE_C5, DUR_EIGHTH},
+    {NOTE_D5, DUR_QUARTER}, {NOTE_E5, DUR_QUARTER},
+    {NOTE_C5, DUR_QUARTER}, {NOTE_A4, DUR_QUARTER},
+    {NOTE_A4, DUR_HALF},    {NOTE_REST, DUR_QUARTER},
+
+    // B section
+    {NOTE_E5, DUR_HALF},    {NOTE_C5, DUR_HALF},
+    {NOTE_D5, DUR_HALF},    {NOTE_B4, DUR_HALF},
+    {NOTE_C5, DUR_HALF},    {NOTE_A4, DUR_HALF},
+    {NOTE_GS4, DUR_HALF},   {NOTE_B4, DUR_QUARTER}, {NOTE_REST, DUR_QUARTER},
+
+    {NOTE_E5, DUR_HALF},    {NOTE_C5, DUR_HALF},
+    {NOTE_D5, DUR_HALF},    {NOTE_B4, DUR_HALF},
+    {NOTE_C5, DUR_QUARTER}, {NOTE_E5, DUR_QUARTER}, {NOTE_A5, DUR_HALF},
+    {NOTE_A5, DUR_HALF},    {NOTE_REST, DUR_QUARTER},
+
+    // A section final
+    {NOTE_E5, DUR_QUARTER}, {NOTE_B4, DUR_EIGHTH},  {NOTE_C5, DUR_EIGHTH},
+    {NOTE_D5, DUR_QUARTER}, {NOTE_C5, DUR_EIGHTH},  {NOTE_B4, DUR_EIGHTH},
+    {NOTE_A4, DUR_QUARTER}, {NOTE_A4, DUR_EIGHTH},  {NOTE_C5, DUR_EIGHTH},
+    {NOTE_E5, DUR_QUARTER}, {NOTE_D5, DUR_EIGHTH},  {NOTE_C5, DUR_EIGHTH},
+    {NOTE_B4, DUR_DOT_QUARTER}, {NOTE_C5, DUR_EIGHTH}, {NOTE_D5, DUR_QUARTER},
+    {NOTE_E5, DUR_QUARTER}, {NOTE_C5, DUR_QUARTER}, {NOTE_A4, DUR_QUARTER},
+    {NOTE_A4, DUR_HALF},    {NOTE_REST, DUR_QUARTER},
+
+    {NOTE_D5, DUR_QUARTER}, {NOTE_F5, DUR_EIGHTH},  {NOTE_A5, DUR_QUARTER},
+    {NOTE_G5, DUR_EIGHTH},  {NOTE_F5, DUR_EIGHTH},  {NOTE_E5, DUR_DOT_QUARTER},
+    {NOTE_C5, DUR_EIGHTH},  {NOTE_E5, DUR_QUARTER},  {NOTE_D5, DUR_EIGHTH},
+    {NOTE_C5, DUR_EIGHTH},  {NOTE_B4, DUR_DOT_QUARTER}, {NOTE_C5, DUR_EIGHTH},
+    {NOTE_D5, DUR_QUARTER}, {NOTE_E5, DUR_QUARTER},
+    {NOTE_C5, DUR_QUARTER}, {NOTE_A4, DUR_QUARTER},
+    {NOTE_A4, DUR_HALF},
+};
+
+#define tetris_length (sizeof(tetris) / sizeof(tetris[0]))  //anzahl der notes automatisch rechnen
 
 int main(void)
 {
@@ -10,27 +78,13 @@ int main(void)
    spi_init();
    ili9341_init();
    button_init();
-   //test
-   ili9341_fill_screen(COLOR_RED);
-   uint8_t is_red = 1;
-   draw_string("123456789", 10, 10, COLOR_BLUE, COLOR_BLACK, 2);
-
+   buzzer_init();
+   
    while (1) 
    {
 
-      if(button_was_pressed()) {
+    buzzer_play(tetris, tetris_length);
 
-         if(is_red == 1) {
-
-            ili9341_fill_screen(COLOR_GREEN);
-            is_red = 0;
-         }
-         else {
-
-            ili9341_fill_screen(COLOR_RED);
-            is_red = 1;
-         }
-      }
    }
    return 0;
 }

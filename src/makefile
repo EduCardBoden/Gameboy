@@ -9,7 +9,8 @@ SRCS = main.c \
        drivers/spi.c \
        drivers/ili9341.c \
        inputs/button.c \
-       font/font.c
+       font/font.c \
+	   buzzer/buzzer.c
 
 all: $(TARGET).hex
 
@@ -20,7 +21,7 @@ $(TARGET).hex: $(TARGET).elf
 	$(OBJCOPY) -O ihex $< $@
 
 flash: $(TARGET).hex
-	avrdude -c arduino -p $(MCU) -P /dev/cu.usbmodem1301 -b 115200 -U flash:w:$(TARGET).hex
+	avrdude -c arduino -p $(MCU) -P /dev/cu.usbmodem1101 -b 115200 -U flash:w:$(TARGET).hex
 
 clean:
 	rm -f *.elf *.hex

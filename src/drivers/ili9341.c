@@ -1,3 +1,4 @@
+#define F_CPU 16000000UL
 #include "ili9341.h"
 #include "spi.h"
 #include <avr/io.h>
