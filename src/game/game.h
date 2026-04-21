@@ -5,8 +5,8 @@ typedef struct {
 
     uint8_t piece;
     uint8_t rotation;
-    uint8_t col;
-    uint8_t row;
+    int8_t col;
+    int8_t row;
 } ActivePiece;
 
 void game_init(void);

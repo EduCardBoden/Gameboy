@@ -1,6 +1,6 @@
 #pragma once 
 #include <stdint.h>
-#include "drivers/ili9341.h"
+#include "../../drivers/ili9341.h"
 
 #define NUM_PIECES 7
 

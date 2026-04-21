@@ -10,7 +10,12 @@ SRCS = main.c \
        drivers/ili9341.c \
        inputs/button.c \
        font/font.c \
-	   buzzer/buzzer.c
+	   buzzer/buzzer.c \
+	   game/game.c \
+	   game/timer/timer.c \
+	   game/pieces/tetrominoes.c \
+	   game/board/board.c 
+	
 
 all: $(TARGET).hex
 
@@ -21,7 +26,7 @@ $(TARGET).hex: $(TARGET).elf
 	$(OBJCOPY) -O ihex $< $@
 
 flash: $(TARGET).hex
-	avrdude -c arduino -p $(MCU) -P /dev/cu.usbmodem1101 -b 115200 -U flash:w:$(TARGET).hex
+	avrdude -c arduino -p $(MCU) -P /dev/cu.usbmodem101 -b 115200 -U flash:w:$(TARGET).hex
 
 clean:
 	rm -f *.elf *.hex

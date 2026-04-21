@@ -1,6 +1,6 @@
 #include "board.h"
 #include <avr/io.h>
-#include "drivers/ili9341.h"
+#include "../../drivers/ili9341.h"
 
 uint16_t board[BHEIGHT][BWIDTH]; //board array, 0 = leer
 
@@ -33,13 +33,13 @@ void board_draw(void) {
                 color = board[r][c]; //gespeicherte farbe nehmen
             }
 
-            ili9341_fill_rect(c * TILESIZE, r * TILESIZE, TILESIZE, TILESIZE, color); //tile zeichnen
+            ili9341_fill_rect(BOARD_OFFSET_X + c * TILESIZE, BOARD_OFFSET_Y + r * TILESIZE, TILESIZE, TILESIZE, color); //tile zeichnen
         }
     }  
     
 }
 
-uint8_t board_is_empty(uint8_t col, uint8_t row) {
+uint8_t board_is_empty(int8_t col, int8_t row) {
     
     if (col >= BWIDTH || row >= BHEIGHT) {
 
@@ -65,33 +65,34 @@ uint8_t board_clear_lines(void) {
 
     uint8_t cleared = 0;
 
-    for (uint8_t r = 0; r < BHEIGHT; r++) {
+    for (uint8_t r = BHEIGHT - 1; r > 0; r--) {
 
         uint8_t full = 1;
 
         for (uint8_t c = 0; c < BWIDTH; c++) {
-
+            
             if (board[r][c] == 0) { 
-
-                full = 0; //eine leere zelle gefunden = reihe nicht voll
+                full = 0;
                 break;
             }
         }
         if (full) {
 
-            for (uint8_t y = r; y > 0; y--) { //alles eine reihe nach unten schieben
+            for (uint8_t y = r; y > 0; y--) {
 
                 for (uint8_t x = 0; x < BWIDTH; x++) {
 
                     board[y][x] = board[y-1][x];
                 }
             }
+
             for (uint8_t x = 0; x < BWIDTH; x++) {
 
-                board[0][x] = 0; //oberste reihe leeren
+                board[0][x] = 0;
             }
+            r++;        // selbe reihe nochmal checken
             cleared++;
         }
     }
-    return cleared; //wie viele reihen wurden gecleart
+    return cleared;
 }
