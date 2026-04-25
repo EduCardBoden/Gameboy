@@ -6,7 +6,7 @@ uint16_t board[BHEIGHT][BWIDTH]; //board array, 0 = leer
 
 void board_init(void) {
 
-    for(uint8_t r = 0; r < BHEIGHT; r++) {
+    for(uint8_t r = 0; r < BHEIGHT; r++) { 
 
         for(uint8_t c = 0; c < BWIDTH; c++) {
 

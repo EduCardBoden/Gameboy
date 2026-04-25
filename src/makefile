@@ -14,7 +14,8 @@ SRCS = main.c \
 	   game/game.c \
 	   game/timer/timer.c \
 	   game/pieces/tetrominoes.c \
-	   game/board/board.c 
+	   game/board/board.c \
+	   game/menu/menu.c
 	
 
 all: $(TARGET).hex

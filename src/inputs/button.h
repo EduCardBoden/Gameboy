@@ -2,10 +2,13 @@
 #include <stdint.h>
 
 typedef enum {
-    BTN_LEFT  = 0,  // PD2
-    BTN_RIGHT = 1,  // PD3
-    BTN_ROT   = 2,  // PD4
-    BTN_DOWN  = 3,  // PD5
+    
+    BTN_LEFT  = 0, //PD3
+    BTN_RIGHT = 1, //PD2
+    BTN_ROT   = 2, //PD4
+    BTN_DOWN  = 3, //PD5
+    BTN_START = 4, //PD6
+    BTN_PAUSE = 5 //PD7
 } Button;
 
 void button_init(void);

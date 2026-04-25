@@ -8,6 +8,10 @@
 
 static ActivePiece current; //globale variable
 
+static uint16_t score = 0; //score variable
+
+GameState game_state = GAME_MENU;
+
 static uint8_t collision_check(uint8_t piece, uint8_t rotation, uint8_t col, uint8_t row) {
 
     for (uint8_t r = 0; r < 4; r++) { //jede zelle durchgehen (row)
@@ -99,10 +103,16 @@ void game_tick(void) {
     } else { //kann nicht fallen -> locken
 
         lock_piece();
-        board_clear_lines();
+
+        uint8_t cleared = board_clear_lines(); //anzahl der geclearten lines
+
+        if(cleared == 1) score += 100;
+        else if (cleared == 2) score += 300;
+
         board_draw();
         spawn_piece();
         draw_piece();
+
     }
 }
 
@@ -160,6 +170,18 @@ void game_init(void) {
     board_init();                     //board leeren
     ili9341_fill_screen(COLOR_BLACK); //screen schwarz
     srand(42);                        //zufallszahlen initialisieren
-    spawn_piece();                    //erstes piece spawnen
-    draw_piece();                     //erstes piece zeichnen
 }
+
+void game_start(void) {
+
+
+    TIMSK2 &= ~(1 << OCIE2A);
+    board_init();
+    ili9341_fill_screen(COLOR_BLACK);
+    board_draw();
+    score = 0;
+    spawn_piece();
+    draw_piece();
+    TIMSK2 |= (1 << OCIE2A);
+}
+
