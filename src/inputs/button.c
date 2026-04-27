@@ -11,15 +11,6 @@ void button_init(void) {
     PORTD |=  ((1 << PD2) | (1 << PD3) | (1 << PD4) | (1 << PD5) | (1 << PD6) | (1 << PD7));  //alle pull-up
 }
 
-uint8_t button_is_pressed(Button btn) {
-
-    if (!(PIND & (1 << btn_pins[btn]))) {
-
-        return 1; //gedrückt
-    }
-    return 0; //nicht gedrückt
-}
-
 uint8_t button_was_pressed(Button btn) {
 
     if (!(PIND & (1 << btn_pins[btn]))) {

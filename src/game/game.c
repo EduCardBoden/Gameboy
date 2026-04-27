@@ -5,6 +5,7 @@
 #include "../inputs/button.h"
 #include "../drivers/ili9341.h"
 #include <stdlib.h>
+#include "menu/menu.h"
 
 static ActivePiece current; //globale variable
 
@@ -111,6 +112,15 @@ void game_tick(void) {
 
         board_draw();
         spawn_piece();
+
+        if (!collision_check(current.piece, current.rotation, current.col, current.row)) { //neu gespawntes piece kollidiert sofort = verloren
+
+            game_state = GAME_OVER;
+            TIMSK2 &= ~(1 << OCIE2A); //timer stoppen
+            menu_draw(COLOR_BLACK, "GAME OVER");
+            return;
+        }
+
         draw_piece();
 
     }
@@ -118,49 +128,52 @@ void game_tick(void) {
 
 void game_loop(void) {
 
-    //links bewegen
     if (button_was_pressed(BTN_LEFT)) {
 
-        if (current.col > 0 && //underflow schutz
-            collision_check(current.piece, current.rotation, current.col - 1, current.row)) {
+    if (collision_check(current.piece, current.rotation, current.col - 1, current.row)) {
 
-            erase_piece();
-            current.col--;
-            draw_piece();
-        }
+        TIMSK2 &= ~(1 << OCIE2A);
+        erase_piece();
+        current.col--;
+        draw_piece();
+        TIMSK2 |= (1 << OCIE2A);
     }
+}
 
-    //rechts bewegen
     if (button_was_pressed(BTN_RIGHT)) {
 
         if (collision_check(current.piece, current.rotation, current.col + 1, current.row)) {
 
+            TIMSK2 &= ~(1 << OCIE2A);
             erase_piece();
             current.col++;
             draw_piece();
+            TIMSK2 |= (1 << OCIE2A);
         }
     }
 
-    //rotieren
     if (button_was_pressed(BTN_ROT)) {
 
-        uint8_t new_rot = (current.rotation + 1) % 4; //0→1→2→3→0
+        uint8_t new_rot = (current.rotation + 1) % 4;
         if (collision_check(current.piece, new_rot, current.col, current.row)) {
 
+            TIMSK2 &= ~(1 << OCIE2A);
             erase_piece();
             current.rotation = new_rot;
             draw_piece();
+            TIMSK2 |= (1 << OCIE2A);
         }
     }
 
-    //soft drop
     if (button_was_pressed(BTN_DOWN)) {
 
         if (collision_check(current.piece, current.rotation, current.col, current.row + 1)) {
 
+            TIMSK2 &= ~(1 << OCIE2A);
             erase_piece();
             current.row++;
             draw_piece();
+            TIMSK2 |= (1 << OCIE2A);
         }
     }
 }

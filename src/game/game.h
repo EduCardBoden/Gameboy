@@ -8,12 +8,11 @@ typedef struct {
     int8_t col;
     int8_t row;
 } ActivePiece;
-
 typedef enum {
 
     GAME_MENU = 0,
     GAME_PLAY = 1,
-    GAME_PAUSE = 2,
+    GAME_OVER = 2
 } GameState;
 
 extern GameState game_state;

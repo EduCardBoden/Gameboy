@@ -4,13 +4,13 @@
 #include <avr/io.h>
 #include <util/delay.h>
 
-// pin definitions (andere schreibweise geben)
+//pin definitions (andere schreibweise geben)
 #define DC_DDR   DDRB
 #define DC_PORT  PORTB
 #define DC_PIN   PB0
-#define RST_DDR  DDRD
-#define RST_PORT PORTD
-#define RST_PIN  PD7
+#define RST_DDR  DDRB
+#define RST_PORT PORTB
+#define RST_PIN  PB1
 #define CS_DDR   DDRB
 #define CS_PORT  PORTB
 #define CS_PIN   PB2

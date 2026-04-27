@@ -15,6 +15,7 @@
 #include "game/game.h"
 #include <avr/interrupt.h>
 #include "game/menu/menu.h"
+#include <avr/pgmspace.h>
 
 static const BuzzerNote tetris[] = {
     //A teil
@@ -90,13 +91,16 @@ int main(void)
    timer_init();
    game_init();
    button_init();
-   //buzzer_init();
-   menu_draw(COLOR_BLACK, "DU HOSENSOHN");
+   buzzer_init();
+   menu_draw(COLOR_BLUE, "TETRIS GAME");
+   
+   //buzzer_play(tetris, tetris_length);
    sei(); //interrupt enable
 
    
    while (1)
    {
+
 
     switch(game_state) {
 
@@ -118,10 +122,19 @@ int main(void)
 
             TIMSK2 &= ~(1 << OCIE2A);
             game_state = GAME_MENU;
-            menu_draw(COLOR_BLUE, "TETRIS");
+            menu_draw(COLOR_BLUE, "OK");
            
         }
         break;
+
+        case GAME_OVER:
+
+        if(button_was_pressed(BTN_START)) {
+
+        game_state = GAME_MENU;
+        menu_draw(COLOR_BLUE, "TETRIS GAME");
+       }
+       break;
 
     }
     

@@ -41,7 +41,7 @@ void board_draw(void) {
 
 uint8_t board_is_empty(int8_t col, int8_t row) {
     
-    if (col >= BWIDTH || row >= BHEIGHT) {
+    if (col < 0 || row < 0 || col >= BWIDTH || row >= BHEIGHT) {
 
         return 0; //außerhalb des boards = wie eine wand = nicht leer
     }
