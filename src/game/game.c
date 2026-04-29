@@ -132,11 +132,11 @@ void game_loop(void) {
 
     if (collision_check(current.piece, current.rotation, current.col - 1, current.row)) {
 
-        TIMSK2 &= ~(1 << OCIE2A);
+        TIMSK2 &= ~(1 << OCIE2A); //Timer starten
         erase_piece();
         current.col--;
         draw_piece();
-        TIMSK2 |= (1 << OCIE2A);
+        TIMSK2 |= (1 << OCIE2A); //Timer stoppen
     }
 }
 

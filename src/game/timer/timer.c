@@ -3,7 +3,7 @@
 #include <avr/interrupt.h>
 #include "timer.h"
 #include "../game.h"
-#include "../../buzzer/buzzer.h"  //neu
+//#include "../../buzzer/buzzer.h"  //neu
 
 volatile uint8_t tick_count = 0;  //zählt wie oft der ISR aufgerufen wurde
 
@@ -16,7 +16,7 @@ void timer_init(void) {
 
 ISR(TIMER2_COMPA_vect) { //Interrupt Service Routine (TIMER2_COMPA_vect ist name vom timer2 interrupts)
 
-    buzzer_tick();  //neu — läuft jeden ISR aufruf (alle 5ms)
+    //buzzer_tick();  //neu — läuft jeden ISR aufruf (alle 5ms)
 
     tick_count++;
     if (tick_count >= 100) {  //100 x 5ms = 500ms
